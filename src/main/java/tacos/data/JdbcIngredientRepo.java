@@ -34,13 +34,17 @@ public class JdbcIngredientRepo implements IngredientRepo{
         return new Ingredient(
                 row.getString("id"),
                 row.getString("name"),
-                Ingredient.Type.valueOf((row.getString("type")));
-        )
+                Ingredient.Type.valueOf(row.getString("type")));
     }
 
     @Override
     public Ingredient save(Ingredient ingredient) {
-        return null;
+        jdbcTemplate.update(
+                "insert into Ingredient(id, name, type) value(?, ?, ?)",
+                ingredient.getId(),
+                ingredient.getName(),
+                ingredient.getType().toString());
+        return ingredient;
     }
 
     public JdbcIngredientRepo(JdbcTemplate jdbcTemplate) {
