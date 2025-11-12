@@ -1,11 +1,10 @@
 package tacos.data;
 
+import org.springframework.data.repository.Repository;
 import tacos.Ingredient;
 
 import java.util.Optional;
 
-public interface IngredientRepo {
-    Iterable<Ingredient> findAll();
-    Optional<Ingredient> findById(String id);
-    Ingredient save(Ingredient ingredient);
+public interface IngredientRepo extends Repository<Ingredient, String> {
+
 }
