@@ -11,6 +11,7 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Taco;
 import tacos.TacoOrder;
+import tacos.TacoUDT;
 import tacos.data.IngredientRepo;
 
 import java.util.Arrays;
@@ -84,7 +85,7 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processTaco(@Valid @ModelAttribute("taco") Taco taco, Errors errors,
+    public String processTaco(@Valid @ModelAttribute("taco") TacoUDT taco, Errors errors,
                               @ModelAttribute TacoOrder tacoOrder) {
         if(errors.hasErrors()) {
             // Show the form again with error messages
