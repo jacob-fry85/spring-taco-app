@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor(access= AccessLevel.PRIVATE,force = true)
 public class Ingredient {
     @Id
-    private Long id;
+    private String id;
     private String name;
     private Type type;
 

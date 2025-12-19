@@ -5,6 +5,6 @@ import tacos.Ingredient;
 
 
 public interface IngredientRepo
-        extends CrudRepository<Ingredient, Long> {
+        extends CrudRepository<Ingredient, String> {
 
 }
