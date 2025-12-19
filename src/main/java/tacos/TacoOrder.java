@@ -1,6 +1,5 @@
 package tacos;
 
-import com.datastax.oss.driver.api.core.uuid.Uuids;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -11,15 +10,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
-import org.springframework.data.cassandra.core.mapping.Column;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -30,8 +25,6 @@ public class TacoOrder implements Serializable {
     private Long id;
     private Date placedAt = new Date();
 
-
-    @Column("delivery_name")
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
     @NotBlank(message="Street is required")
@@ -50,7 +43,6 @@ public class TacoOrder implements Serializable {
     @Digits(integer=3, fraction=0, message="Invalid CVV")
     private String ccCVV;
 
-    @Column("tacos")
     private List<TacoUDT> tacos = new ArrayList<>();
 
     public void addTaco(TacoUDT taco) {
