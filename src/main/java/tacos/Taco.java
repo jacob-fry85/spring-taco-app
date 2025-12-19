@@ -1,6 +1,8 @@
 package tacos;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -15,10 +17,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Table("tacos")
+@Entity
 public class Taco {
-    @PrimaryKeyColumn(type=PrimaryKeyType.PARTITIONED)
-    private UUID id = Uuids.timeBased();
+    @Id
+    private Long id;
 
     @PrimaryKeyColumn(type=PrimaryKeyType.CLUSTERED, ordering=Ordering.DESCENDING)
     private Date createdAt = new Date();

@@ -1,10 +1,10 @@
 package tacos.data;
 
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.repository.CrudRepository;
 import tacos.Ingredient;
 
 
 public interface IngredientRepo
-        extends CassandraRepository<Ingredient, String> {
+        extends CrudRepository<Ingredient, String> {
 
 }

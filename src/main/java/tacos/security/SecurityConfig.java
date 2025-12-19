@@ -15,16 +15,21 @@ import tacos.data.UserRepo;
 @Configuration
 public class SecurityConfig {
 
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/design").authenticated()
+//                        .anyRequest().permitAll()
+//                )
+//                .formLogin(Customizer.withDefaults())  // Enables login form
+//                .logout(Customizer.withDefaults());
+//
+//        return http.build();
+//    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/design").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .formLogin(Customizer.withDefaults())  // Enables login form
-                .logout(Customizer.withDefaults());
-
         return http.build();
     }
 

@@ -1,11 +1,11 @@
 package tacos.data;
 
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.repository.CrudRepository;
 import tacos.TacoOrder;
 
 import java.util.UUID;
 
 
 public interface OrderRepo
-        extends CassandraRepository<TacoOrder, UUID> {
+        extends CrudRepository<TacoOrder, Long> {
 }

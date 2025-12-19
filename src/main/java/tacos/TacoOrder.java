@@ -1,6 +1,7 @@
 package tacos;
 
 import com.datastax.oss.driver.api.core.uuid.Uuids;
+import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -20,14 +22,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Table("orders")
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor(access= AccessLevel.PUBLIC, force=true)
 public class TacoOrder implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @PrimaryKey
-    private UUID id = Uuids.timeBased();
+    @Id
+    private Long id;
     private Date placedAt = new Date();
 
 
