@@ -11,10 +11,8 @@ import tacos.Ingredient;
 import tacos.Ingredient.Type;
 import tacos.Taco;
 import tacos.TacoOrder;
-import tacos.TacoUDT;
 import tacos.data.IngredientRepo;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +83,7 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processTaco(@Valid @ModelAttribute("taco") TacoUDT taco, Errors errors,
+    public String processTaco(@Valid @ModelAttribute("taco") Taco taco, Errors errors,
                               @ModelAttribute TacoOrder tacoOrder) {
         if(errors.hasErrors()) {
             // Show the form again with error messages
@@ -93,7 +91,6 @@ public class DesignTacoController {
         }
 
         tacoOrder.addTaco(taco);
-        log.info("Processing taco: {}", taco);
 
         return "redirect:/orders/current";
     }

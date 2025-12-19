@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,9 +43,9 @@ public class TacoOrder implements Serializable {
     @Digits(integer=3, fraction=0, message="Invalid CVV")
     private String ccCVV;
 
-    private List<TacoUDT> tacos = new ArrayList<>();
+    private List<Taco> tacos = new ArrayList<>();
 
-    public void addTaco(TacoUDT taco) {
+    public void addTaco(Taco taco) {
         tacos.add(taco);
     }
 }

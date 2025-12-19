@@ -11,7 +11,7 @@ import java.util.Collection;
 
 @Entity
 @Data
-@NoArgsConstructor(access= AccessLevel.PRIVATE, force = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 @RequiredArgsConstructor
 @ToString(exclude = "password")
 @EqualsAndHashCode(of = "username")
@@ -19,7 +19,8 @@ import java.util.Collection;
 public class User  implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    @Id@GeneratedValue(strategy= GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 30)
