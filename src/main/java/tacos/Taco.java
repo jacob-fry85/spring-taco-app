@@ -15,7 +15,6 @@ public class Taco {
     @Id
     private Long id;
 
-    @Id
     private Date createdAt = new Date();
 
     @NotNull

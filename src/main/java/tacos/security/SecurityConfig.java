@@ -1,5 +1,6 @@
 package tacos.security;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,40 +16,28 @@ import tacos.data.UserRepo;
 @Configuration
 public class SecurityConfig {
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/design").authenticated()
-//                        .anyRequest().permitAll()
-//                )
-//                .formLogin(Customizer.withDefaults())  // Enables login form
-//                .logout(Customizer.withDefaults());
-//
-//        return http.build();
-//    }
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.build();
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/design", "/orders").hasRole("USER")
+                        .requestMatchers("/", "/login", "/register", "/h2-console/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/")
+                )
+                .build();
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user = User.builder()
-//                .username("darwin")
-//                .password("{noop}password") // {noop} means no password encoder
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
+
 
     @Bean
     public UserDetailsService userDetailsService(UserRepo userRepo) {
         return username -> {
             User user = userRepo.findByUsername(username);
-            if(user == null) return user;
+            if(user != null) return user;
 
             throw new UsernameNotFoundException("User '" + username + "' not found");
         };
@@ -58,4 +47,27 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public CommandLineRunner dataLoader(
+            UserRepo userRepo,
+            PasswordEncoder encoder
+    ) {
+        return args -> {
+            if (userRepo.findByUsername("admin") == null) {
+                User admin = new User(
+                        "admin",
+                        encoder.encode("test"),
+                        "Admin User",
+                        "Street",
+                        "City",
+                        "State",
+                        "00000",
+                        "0800000000"
+                );
+                userRepo.save(admin);
+            }
+        };
+    }
+
 }
