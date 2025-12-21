@@ -18,17 +18,27 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
+                 http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/design", "/orders").hasRole("USER")
                         .requestMatchers("/", "/login", "/register", "/h2-console/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(form ->
+                        form.loginPage("/login")
+                            .defaultSuccessUrl("/design", true))
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
                 )
-                .build();
+                // Required for H2 console
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")
+                )
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                );
+
+                return http.build();
     }
 
 
