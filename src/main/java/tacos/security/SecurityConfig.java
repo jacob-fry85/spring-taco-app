@@ -18,15 +18,17 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                 http
+                http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/design", "/orders").hasRole("USER")
-                        .requestMatchers("/", "/login", "/register", "/h2-console/**").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/public/**", "/oauth2/**", "/login/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .formLogin(form ->
-                        form.loginPage("/login")
-                            .defaultSuccessUrl("/design", true))
+
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/design", true)
+                )
+
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
                 )
@@ -40,8 +42,6 @@ public class SecurityConfig {
 
                 return http.build();
     }
-
-
 
     @Bean
     public UserDetailsService userDetailsService(UserRepo userRepo) {
