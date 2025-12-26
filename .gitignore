@@ -1,6 +1,21 @@
+# Build output
 target/
+
+# IDEs
 .idea/
 *.iml
+
+# OS files
 .DS_Store
+
+# Logs
 *.log
 
+# Local environment / secrets
+.env
+.env.*
+*.env
+
+# Spring Boot local override configs (DO NOT COMMIT SECRETS)
+src/main/resources/application-local.properties
+src/main/resources/application-*.local.properties

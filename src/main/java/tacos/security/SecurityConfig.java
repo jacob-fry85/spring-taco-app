@@ -3,7 +3,6 @@ package tacos.security;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,37 +17,46 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-                http
+        http
+                // 1) authorizeRequests()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/public/**", "/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
+                        // protected routes
+                        .requestMatchers("/design", "/orders").hasRole("USER")
+
+                        // public routes
+                        .requestMatchers("/", "/public/**", "/login", "/oauth2/**", "/h2-console/**").permitAll()
+
+                        // anything else
+                        .anyRequest().permitAll()
                 )
 
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/design", true)
+                // 2) formLogin().loginPage("/login")
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll()
                 )
 
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/")
-                )
+                // 3) oauth2Login()
+//                .oauth2Login(oauth2 -> oauth2
+//                        .loginPage("/login")
+//                        .defaultSuccessUrl("/design", true)
+//                )
+
+                // 4) logout()
+                .logout(logout -> logout.logoutSuccessUrl("/"))
+
                 // Required for H2 console
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                )
-                .headers(headers -> headers
-                        .frameOptions(frame -> frame.sameOrigin())
-                );
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-                return http.build();
+        return http.build();
     }
 
     @Bean
     public UserDetailsService userDetailsService(UserRepo userRepo) {
         return username -> {
             User user = userRepo.findByUsername(username);
-            if(user != null) return user;
-
+            if (user != null) return user;
             throw new UsernameNotFoundException("User '" + username + "' not found");
         };
     }
@@ -59,10 +67,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CommandLineRunner dataLoader(
-            UserRepo userRepo,
-            PasswordEncoder encoder
-    ) {
+    public CommandLineRunner dataLoader(UserRepo userRepo, PasswordEncoder encoder) {
         return args -> {
             if (userRepo.findByUsername("admin") == null) {
                 User admin = new User(
@@ -79,5 +84,4 @@ public class SecurityConfig {
             }
         };
     }
-
 }
