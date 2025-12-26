@@ -4,48 +4,65 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import tacos.User;
 import tacos.data.UserRepo;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
+    OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
+        OidcUserService delegate = new OidcUserService();
+
+        return userRequest -> {
+            OidcUser oidcUser = delegate.loadUser(userRequest);
+
+            Set<GrantedAuthority> mappedAuthorities = new HashSet<>(oidcUser.getAuthorities());
+            mappedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER")); // <-- tambah role app
+
+            // nameAttributeKey biasanya "sub" untuk Google; ini aman
+            return new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), "sub");
+        };
+    }
+
+    @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1) authorizeRequests()
                 .authorizeHttpRequests(auth -> auth
-                        // protected routes
-                        .requestMatchers("/design", "/orders").hasRole("USER")
-
-                        // public routes
-                        .requestMatchers("/", "/public/**", "/login", "/oauth2/**", "/h2-console/**").permitAll()
-
-                        // anything else
-                        .anyRequest().permitAll()
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**",
+                                "/oauth2/**", "/login/oauth2/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().hasAnyRole("USER", "ADMIN")
                 )
-
-                // 2) formLogin().loginPage("/login")
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/design", true)
                         .permitAll()
                 )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(u -> u.oidcUserService(oidcUserService()))
+                        .defaultSuccessUrl("/design", true)
+                )
 
-                // 3) oauth2Login()
-//                .oauth2Login(oauth2 -> oauth2
-//                        .loginPage("/login")
-//                        .defaultSuccessUrl("/design", true)
-//                )
-
-                // 4) logout()
                 .logout(logout -> logout.logoutSuccessUrl("/"))
-
-                // Required for H2 console
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 

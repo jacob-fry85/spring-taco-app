@@ -38,28 +38,6 @@ public class DesignTacoController {
         }
     }
 
-//    @ModelAttribute
-//    public void addIngredientsToModel(Model model) {
-//        List<Ingredient> ingredients = Arrays.asList(
-//                new Ingredient("FLTO", "Flour Tortilla", Ingredient.Type.WRAP),
-//                new Ingredient("COTO", "Corn Tortilla", Ingredient.Type.WRAP),
-//                new Ingredient("GRBF", "Ground Beef", Ingredient.Type.PROTEIN),
-//                new Ingredient("CARN", "Carnitas", Ingredient.Type.PROTEIN),
-//                new Ingredient("TMTO", "Diced Tomatoes", Type.VEGGIES),
-//                new Ingredient("LETC", "Lettuce", Type.VEGGIES),
-//                new Ingredient("CHED", "Cheddar", Type.CHEESE),
-//                new Ingredient("JACK", "Monterrey Jack", Type.CHEESE),
-//                new Ingredient("SALSA", "Salsa", Type.SAUCE),
-//                new Ingredient("SRCR", "Sour Cream", Type.SAUCE)
-//        );
-//
-//        Type[] types = Type.values();
-//        for(Type type : types) {
-//            model.addAttribute(type.toString().toLowerCase(),
-//                    filterByType(ingredients, type));
-//        }
-//    }
-
     @ModelAttribute(name = "tacoOrder")
     public TacoOrder order() {
         return new TacoOrder();
