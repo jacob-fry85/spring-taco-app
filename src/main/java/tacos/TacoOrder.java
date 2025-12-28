@@ -1,8 +1,6 @@
 package tacos;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -11,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.CreditCardNumber;
-import jakarta.persistence.Id;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,4 +49,7 @@ public class TacoOrder implements Serializable {
     public void addTaco(Taco taco) {
         tacos.add(taco);
     }
+
+    @ManyToOne
+    private User user;
 }
