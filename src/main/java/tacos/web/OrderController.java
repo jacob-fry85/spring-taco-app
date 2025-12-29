@@ -2,6 +2,7 @@ package tacos.web;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -34,15 +35,13 @@ public class OrderController {
     @PostMapping
     public String processOrder(@Valid  @ModelAttribute("tacoOrder") TacoOrder order, Errors errors,
                                SessionStatus sessionStatus,
-                               Principal principal) {
+                               @AuthenticationPrincipal User user) {
         if(errors.hasErrors()) {
             // Show the form again with error messages
             return "orderForm";
         }
         log.info("Order Submitted: {}", order);
 
-        User user = userRepo.findByUsername(principal.getName());
-        if(user == null)  return "redirect:/";
         order.setUser(user);
 
         orderRepo.save(order);
